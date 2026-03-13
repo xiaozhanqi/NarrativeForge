@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NarrativeForge - Universal Narrative Engineering Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        accent: '#8b5cf6',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-light min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">NarrativeForge</h1>
+                    <p class="text-slate-400">Universal Narrative Engineering Platform</p>
+                </div>
+                <nav class="flex space-x-4">
+                    <button id="analyzer-btn" class="px-4 py-2 bg-primary hover:bg-primary/80 rounded-lg transition-all">
+                        <i class="fa fa-search mr-2"></i>Analysis Engine
+                    </button>
+                    <button id="generator-btn" class="px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all">
+                        <i class="fa fa-pencil mr-2"></i>Generation Engine
+                    </button>
+                    <button id="visualizer-btn" class="px-4 py-2 bg-accent hover:bg-accent/80 rounded-lg transition-all">
+                        <i class="fa fa-eye mr-2"></i>Visualization
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Panel -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Project Resources -->
+                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fa fa-folder-open mr-2 text-primary"></i>Project Resources
+                    </h2>
+                    <div class="space-y-2">
+                        <div class="flex items-center p-2 hover:bg-slate-700/50 rounded-lg cursor-pointer">
+                            <i class="fa fa-file-text-o mr-3 text-slate-400"></i>
+                            <span>Source Text</span>
+                        </div>
+                        <div class="flex items-center p-2 hover:bg-slate-700/50 rounded-lg cursor-pointer">
+                            <i class="fa fa-cube mr-3 text-slate-400"></i>
+                            <span>Narrative Tensor</span>
+                        </div>
+                        <div class="flex items-center p-2 hover:bg-slate-700/50 rounded-lg cursor-pointer">
+                            <i class="fa fa-file-o mr-3 text-slate-400"></i>
+                            <span>Generation Results</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain/Genre -->
+                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fa fa-tags mr-2 text-secondary"></i>Domain/Genre
+                    </h2>
+                    <select id="genre-select" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2">
+                        <option value="generic">Generic</option>
+                        <option value="scifi">Hard Sci-Fi</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="historical">Historical</option>
+                        <option value="mystery">Mystery</option>
+                        <option value="realistic">Realistic</option>
+                    </select>
+                </div>
+
+                <!-- World State Viewer -->
+                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fa fa-globe mr-2 text-accent"></i>World State Viewer
+                    </h2>
+                    <div class="space-y-2">
+                        <button class="w-full flex items-center justify-between p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-all">
+                            <span>3D Relationship Graph</span>
+                            <i class="fa fa-external-link"></i>
+                        </button>
+                        <button class="w-full flex items-center justify-between p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-all">
+                            <span>Timeline</span>
+                            <i class="fa fa-external-link"></i>
+                        </button>
+                        <button class="w-full flex items-center justify-between p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-all">
+                            <span>Foreshadowing List</span>
+                            <i class="fa fa-external-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Workspace -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Analyzer Workspace -->
+                <div id="analyzer-workspace" class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fa fa-search mr-2 text-primary"></i>Analysis Engine
+                    </h2>
+
+                    <!-- Input Section -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Source Text</label>
+                        <textarea id="analysis-text" rows="6" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        <div class="mt-2 flex justify-end">
+                            <button id="load-sample-btn" class="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg transition-all">
+                                <i class="fa fa-file-text-o mr-1"></i>Load Sample
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Parameters -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Domain</label>
+                            <select id="analyzer-domain" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2">
+                                <option value="generic">generic</option>
+                                <option value="scifi">scifi</option>
+                                <option value="fantasy">fantasy</option>
+                                <option value="historical">historical</option>
+                                <option value="mystery">mystery</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Provider</label>
+                            <select id="analyzer-provider" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2">
+                                <option value="kimi">kimi</option>
+                                <option value="volcano">volcano</option>
+                                <option value="lmstudio">lmstudio</option>
+                                <option value="h200">h200</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Temperature</label>
+                            <input type="range" id="analyzer-temp" min="0" max="2" step="0.1" value="0.7" class="w-full">
+                            <span id="temp-value" class="text-sm text-slate-400">0.7</span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Chunk Strategy</label>
+                            <select id="analyzer-chunk" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2">
+                                <option value="adaptive">adaptive</option>
+                                <option value="chapter_based">chapter_based</option>
+                                <option value="scene_based">scene_based</option>
+                                <option value="fixed">fixed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Analysis Progress</label>
+                        <div class="w-full bg-slate-700 rounded-full h-2.5">
+                            <div id="analysis-progress" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <p id="analysis-status" class="mt-2 text-sm text-slate-400">Ready</p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="flex space-x-4 mb-6">
+                        <button id="start-analysis-btn" class="px-4 py-2 bg-primary hover:bg-primary/80 rounded-lg transition-all flex-1">
+                            <i class="fa fa-play mr-2"></i>Start Analysis
+                        </button>
+                        <button id="export-tensor-btn" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-all" disabled>
+                            <i class="fa fa-download mr-2"></i>Export Tensor
+                        </button>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="analysis-results" class="hidden">
+                        <h3 class="text-lg font-semibold mb-3">Analysis Results</h3>
+                        <div class="bg-slate-700/50 rounded-lg p-4">
+                            <pre id="analysis-result-text" class="text-sm overflow-auto max-h-64 scrollbar-hide"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generator Workspace -->
+                <div id="generator-workspace" class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 hidden">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fa fa-pencil mr-2 text-secondary"></i>Generation Engine
+                    </h2>
+
+                    <!-- Input Section -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Narrative Tensor</label>
+                        <textarea id="tensor-text" rows="6" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-secondary"></textarea>
+                        <div class="mt-2 flex justify-end">
+                            <button id="load-tensor-btn" class="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg transition-all">
+                                <i class="fa fa-file-o mr-1"></i>Load Tensor
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generation Mode -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Generation Mode</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 transition-all">
+                                <input type="radio" name="generation-mode" value="continuation" checked class="mr-2">
+                                <span>Continuation</span>
+                            </label>
+                            <label class="flex items-center p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 transition-all">
+                                <input type="radio" name="generation-mode" value="au" class="mr-2">
+                                <span>AU</span>
+                            </label>
+                            <label class="flex items-center p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 transition-all">
+                                <input type="radio" name="generation-mode" value="cross_genre" class="mr-2">
+                                <span>Cross Genre</span>
+                            </label>
+                            <label class="flex items-center p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 transition-all">
+                                <input type="radio" name="generation-mode" value="interactive" class="mr-2">
+                                <span>Interactive</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Generation Progress</label>
+                        <div class="w-full bg-slate-700 rounded-full h-2.5">
+                            <div id="generation-progress" class="bg-secondary h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <p id="generation-status" class="mt-2 text-sm text-slate-400">Ready</p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="flex space-x-4 mb-6">
+                        <button id="start-generation-btn" class="px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all flex-1">
+                            <i class="fa fa-play mr-2"></i>Start Generation
+                        </button>
+                        <button id="export-text-btn" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-all" disabled>
+                            <i class="fa fa-download mr-2"></i>Export Text
+                        </button>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="generation-results" class="hidden">
+                        <h3 class="text-lg font-semibold mb-3">Generation Results</h3>
+                        <div class="bg-slate-700/50 rounded-lg p-4">
+                            <pre id="generation-result-text" class="text-sm overflow-auto max-h-64 scrollbar-hide"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualizer Workspace -->
+                <div id="visualizer-workspace" class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 hidden">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fa fa-eye mr-2 text-accent"></i>Visualization
+                    </h2>
+                    <div class="flex flex-col items-center justify-center h-96">
+                        <i class="fa fa-cube text-6xl text-accent mb-4 opacity-50"></i>
+                        <h3 class="text-xl font-semibold mb-2">3D Relationship Graph Visualization</h3>
+                        <p class="text-slate-400 text-center max-w-md">After loading the narrative tensor, a 3D relationship graph will be displayed here, showing the relationships between entities and story structure.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-slate-400 text-sm">
+            <p>&copy; 2026 NarrativeForge - Universal Narrative Engineering Platform</p>
+        </footer>
+    </div>
+
+    <script>
+        // Workspace switching
+        document.getElementById('analyzer-btn').addEventListener('click', function() {
+            document.getElementById('analyzer-workspace').classList.remove('hidden');
+            document.getElementById('generator-workspace').classList.add('hidden');
+            document.getElementById('visualizer-workspace').classList.add('hidden');
+        });
+
+        document.getElementById('generator-btn').addEventListener('click', function() {
+            document.getElementById('analyzer-workspace').classList.add('hidden');
+            document.getElementById('generator-workspace').classList.remove('hidden');
+            document.getElementById('visualizer-workspace').classList.add('hidden');
+        });
+
+        document.getElementById('visualizer-btn').addEventListener('click', function() {
+            document.getElementById('analyzer-workspace').classList.add('hidden');
+            document.getElementById('generator-workspace').classList.add('hidden');
+            document.getElementById('visualizer-workspace').classList.remove('hidden');
+        });
+
+        // Temperature slider
+        const tempSlider = document.getElementById('analyzer-temp');
+        const tempValue = document.getElementById('temp-value');
+        tempSlider.addEventListener('input', function() {
+            tempValue.textContent = this.value;
+        });
+
+        // Load sample text
+        document.getElementById('load-sample-btn').addEventListener('click', function() {
+            fetch('/health')
+                .then(response => response.json())
+                .then(data => {
+                    // Sample text
+                    const sampleText = `Chapter 1: Discovery of the Star Core
+
+Aria stood in the center of the laboratory, holding a glowing crystal in her hand. The crystal emitted a faint blue light, as if stars were flowing inside it.
+
+"What is this?" her assistant asked.
+
+"I don't know," Aria replied, "but its energy readings far exceed any known substance."
+
+Chapter 2: Research Begins
+
+Over the following weeks, Aria and her team conducted comprehensive research on this crystal. They discovered that it seemed to be a concentrated energy source, containing enough power to drive an entire city.
+
+"Let's call it the Star Core," Aria suggested, "because its energy characteristics are similar to a stellar core."
+
+Chapter 3: Anomalous Phenomena
+
+As research deepened, some anomalous phenomena began to appear. Laboratory equipment frequently malfunctioned, and researchers reported feeling dizzy and nauseous.
+
+"This might be radiation effects from the Star Core," Aria said with concern, "we need to take stricter protective measures."
+
+Chapter 4: Unexpected Discovery
+
+During one experiment, Aria accidentally discovered that the Star Core seemed to resonate with her consciousness. When she touched the Star Core, she saw some images - a distant galaxy and a highly advanced civilization.
+
+"This is impossible," she murmured, "but I did see it."
+
+Chapter 5: Connection
+
+As time passed, Aria's connection with the Star Core grew stronger. She began receiving some information that seemed to come from that distant civilization.
+
+"They are looking for something," Aria told her team, "they seem to be searching for a lost energy core."
+
+Chapter 6: Decision
+
+Aria faced a difficult decision: whether to make the existence of the Star Core public or keep it hidden. She knew that if the Star Core's energy was misused, it could lead to catastrophic consequences.
+
+"We must proceed with caution," she told her team, "the power of the Star Core far exceeds our imagination."
+
+Chapter 7: Threat
+
+Just as Aria was considering how to handle the Star Core, a mysterious organization began targeting her research. They sent agents to try to steal the Star Core.
+
+"We must protect the Star Core," Aria told her team, "no matter what the cost."
+
+Chapter 8: Truth
+
+In the confrontation with the mysterious organization, Aria gradually discovered the truth about the Star Core. It turned out that the Star Core was a legacy of an ancient civilization. Before their destruction, they sent the Star Core to Earth, hoping that one day it would be discovered and utilized by a responsible civilization.
+
+"We cannot disappoint them," Aria said, "we must use the Star Core's power to benefit humanity, not destroy it."`;
+                    document.getElementById('analysis-text').value = sampleText;
+                })
+                .catch(error => {
+                    console.error('Error loading sample:', error);
+                });
+        });
+
+        // Analysis
+        document.getElementById('start-analysis-btn').addEventListener('click', function() {
+            const text = document.getElementById('analysis-text').value;
+            if (!text) {
+                alert('Please enter text');
+                return;
+            }
+
+            const progressBar = document.getElementById('analysis-progress');
+            const statusText = document.getElementById('analysis-status');
+            const startBtn = this;
+            const exportBtn = document.getElementById('export-tensor-btn');
+
+            startBtn.disabled = true;
+            progressBar.style.width = '0%';
+            statusText.textContent = 'Starting analysis...';
+
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress === 10) statusText.textContent = 'Initializing analysis engine...';
+                else if (progress === 30) statusText.textContent = 'Performing semantic chunking and entity recognition...';
+                else if (progress === 50) statusText.textContent = 'Building relational topology...';
+                else if (progress === 70) statusText.textContent = 'Extracting world rules...';
+                else if (progress === 90) statusText.textContent = 'Mining foreshadowing and clues...';
+                else if (progress === 100) clearInterval(interval);
+            }, 500);
+
+            // API call
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    text: text,
+                    project_id: 'web_project'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                statusText.textContent = 'Analysis complete!';
+                startBtn.disabled = false;
+                exportBtn.disabled = false;
+
+                // Show results
+                const resultsDiv = document.getElementById('analysis-results');
+                const resultText = document.getElementById('analysis-result-text');
+                resultsDiv.classList.remove('hidden');
+                resultText.textContent = JSON.stringify(data, null, 2);
+
+                // Store tensor for export
+                window.narrativeTensor = data;
+            })
+            .catch(error => {
+                clearInterval(interval);
+                statusText.textContent = 'Analysis failed';
+                startBtn.disabled = false;
+                console.error('Analysis error:', error);
+                alert('Analysis failed: ' + error.message);
+            });
+        });
+
+        // Export tensor
+        document.getElementById('export-tensor-btn').addEventListener('click', function() {
+            if (!window.narrativeTensor) {
+                alert('No narrative tensor to export');
+                return;
+            }
+
+            const tensorStr = JSON.stringify(window.narrativeTensor, null, 2);
+            const blob = new Blob([tensorStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tensor.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Generation
+        document.getElementById('start-generation-btn').addEventListener('click', function() {
+            const tensorText = document.getElementById('tensor-text').value;
+            if (!tensorText) {
+                alert('Please enter narrative tensor');
+                return;
+            }
+
+            let narrativeTensor;
+            try {
+                narrativeTensor = JSON.parse(tensorText);
+            } catch (e) {
+                alert('Invalid narrative tensor format');
+                return;
+            }
+
+            const progressBar = document.getElementById('generation-progress');
+            const statusText = document.getElementById('generation-status');
+            const startBtn = this;
+            const exportBtn = document.getElementById('export-text-btn');
+
+            startBtn.disabled = true;
+            progressBar.style.width = '0%';
+            statusText.textContent = 'Starting generation...';
+
+            // Get generation mode
+            const mode = document.querySelector('input[name="generation-mode"]:checked').value;
+
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress === 10) statusText.textContent = 'Initializing generation engine...';
+                else if (progress === 25) statusText.textContent = 'Building plot topology...';
+                else if (progress === 40) statusText.textContent = 'Initializing world state...';
+                else if (progress === 60) statusText.textContent = 'Drafting scenes in parallel...';
+                else if (progress === 75) statusText.textContent = 'Sculpting dialogue voice...';
+                else if (progress === 90) statusText.textContent = 'Polishing prose style...';
+                else if (progress === 100) clearInterval(interval);
+            }, 500);
+
+            // API call
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    narrative_tensor: narrativeTensor,
+                    mode: mode,
+                    project_id: 'web_project'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                statusText.textContent = 'Generation complete!';
+                startBtn.disabled = false;
+                exportBtn.disabled = false;
+
+                // Show results
+                const resultsDiv = document.getElementById('generation-results');
+                const resultText = document.getElementById('generation-result-text');
+                resultsDiv.classList.remove('hidden');
+                resultText.textContent = data.generated_text;
+
+                // Store text for export
+                window.generatedText = data.generated_text;
+            })
+            .catch(error => {
+                clearInterval(interval);
+                statusText.textContent = 'Generation failed';
+                startBtn.disabled = false;
+                console.error('Generation error:', error);
+                alert('Generation failed: ' + error.message);
+            });
+        });
+
+        // Export text
+        document.getElementById('export-text-btn').addEventListener('click', function() {
+            if (!window.generatedText) {
+                alert('No generated text to export');
+                return;
+            }
+
+            const blob = new Blob([window.generatedText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'generated.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Load tensor
+        document.getElementById('load-tensor-btn').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const tensor = JSON.parse(e.target.result);
+                            document.getElementById('tensor-text').value = JSON.stringify(tensor, null, 2);
+                        } catch (error) {
+                            alert('Failed to load tensor file');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        });
+    </script>
+</body>
+</html>

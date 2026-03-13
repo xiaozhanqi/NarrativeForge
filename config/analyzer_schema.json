@@ -1,0 +1,83 @@
+{
+  "module": "analyzer",
+  "domain_knowledge": "generic_fantasy",
+  "learning_rounds": [
+    {
+      "id": "L1_SemanticChunking",
+      "name": "语义分块与实体识别",
+      "provider": "kimi",
+      "model": "kimi-k1.5",
+      "temperature": 0.1,
+      "top_p": 0.95,
+      "frequency_penalty": 0.0,
+      "max_tokens": 4096,
+      "chunk_strategy": "adaptive",
+      "chunk_size": 6000,
+      "overlap": 200,
+      "parallel_workers": 4,
+      "prompt_template": "prompts/analysis/entity_extraction.txt",
+      "output_schema": "schemas/entities.jsonld",
+      "extractors": ["character", "location", "item", "timeline"]
+    },
+    {
+      "id": "L2_RelationalTopology",
+      "name": "关系拓扑构建",
+      "provider": "lmstudio",
+      "model": "deepseek-v3-q5",
+      "temperature": 0.0,
+      "context_window": 128000,
+      "input_from": ["L1_SemanticChunking"],
+      "output_schema": "schemas/relation_graph.jsonld",
+      "graph_type": "dynamic"
+    },
+    {
+      "id": "L3_WorldbuildingCanon",
+      "name": "世界观规则提取",
+      "provider": "volcano",
+      "model": "doubao-pro-128k",
+      "temperature": 0.1,
+      "domain_specific": true,
+      "knowledge_base": "kb/magic_systems.db",
+      "extract_rules": ["physical_laws", "social_structure", "economic_system", "magic_rules"]
+    },
+    {
+      "id": "L4_ForeshadowingMining",
+      "name": "伏笔与线索挖掘",
+      "provider": "kimi",
+      "model": "kimi-k1.5-long-context",
+      "temperature": 0.2,
+      "pattern_matching": ["chekhov_gun", "red_herring", "parallel_plot", "symbolism"],
+      "output": "foreshadowing_registry.json"
+    }
+  ],
+  "validation_rounds": [
+    {
+      "id": "V1_ConsistencyCheck",
+      "name": "时空一致性校验",
+      "provider": "local",
+      "validation_type": "temporal_spatial_consistency",
+      "ruleset": "rules/timeline_checker.py",
+      "check_items": ["no_time_paradox", "location_continuity", "travel_time_realistic"]
+    },
+    {
+      "id": "V2_CharacterCoherence",
+      "name": "人物行为逻辑校验",
+      "provider": "volcano",
+      "model": "doubao-pro-vision",
+      "temperature": 0.1,
+      "validation_type": "character_psychology",
+      "reference_kb": "kb/personality_models.db",
+      "threshold": 0.90,
+      "blocking": true
+    },
+    {
+      "id": "V3_DomainAccuracy",
+      "name": "领域知识准确性",
+      "provider": "multi",
+      "models": ["kimi-k1.5", "deepseek-v3", "gpt-4"],
+      "validation_type": "fact_check",
+      "domain": "generic_fantasy",
+      "threshold": 0.95
+    }
+  ]
+}

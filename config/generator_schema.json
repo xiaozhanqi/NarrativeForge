@@ -1,0 +1,106 @@
+{
+  "module": "generator",
+  "description": "通用叙事生成引擎",
+  "dependencies": ["analyzer.L4_ForeshadowingMining"],
+  "input_tensor": "narrative_tensor",
+  "generation_mode": "continuation",
+  "target_genre": "same",
+  "learning_rounds": [
+    {
+      "id": "L1_PlotTopology",
+      "name": "情节拓扑构建",
+      "provider": "kimi",
+      "model": "kimi-k1.5-long-context",
+      "temperature": 0.3,
+      "top_p": 0.9,
+      "frequency_penalty": 0.1,
+      "presence_penalty": 0.1,
+      "max_tokens": 8192,
+      "context_window": 128000,
+      "input_data": ["narrative_tensor.foreshadowing_field", "narrative_tensor.world_rules"],
+      "constraint_checks": ["no_temporal_paradox", "resource_conservation", "character_arc_continuity"],
+      "output_format": "plot_graph_json"
+    },
+    {
+      "id": "L2_WorldStateInit",
+      "name": "世界状态初始化",
+      "provider": "local",
+      "type": "computation",
+      "algorithm": "quantum_world_state",
+      "initial_state": "narrative_tensor.entity_space",
+      "foreclosure_list": "narrative_tensor.foreshadowing_field",
+      "output": "world_state_quantum"
+    },
+    {
+      "id": "L3_SceneDrafting",
+      "name": "场景分镜起草",
+      "provider": "h200",
+      "model": "deepseek-v3",
+      "temperature": 0.6,
+      "context_window": 1000000,
+      "parallel_scenes": 3,
+      "constraint_injection": true,
+      "output_format": "scene_cards"
+    },
+    {
+      "id": "L4_DialogueSculpting",
+      "name": "对话声纹雕刻",
+      "provider": "lmstudio",
+      "model": "qwen2.5-32b",
+      "temperature": 0.8,
+      "character_voice_lock": true,
+      "rag_retrieval": {
+        "enabled": true,
+        "source": "canon_dialogues",
+        "top_k": 5,
+        "similarity_threshold": 0.85
+      },
+      "psychological_coherence": true
+    },
+    {
+      "id": "L5_ProsePolishing",
+      "name": "文风抛光",
+      "provider": "kimi",
+      "model": "kimi-k1.5",
+      "temperature": 0.4,
+      "style_transfer": {
+        "source": "narrative_tensor.embedding_vector",
+        "intensity": 0.7
+      },
+      "literary_devices": ["metaphor", "symbolism", "irony", "foreshadowing"]
+    }
+  ],
+  "validation_rounds": [
+    {
+      "id": "V1_OOC_Check",
+      "name": "人物OOC检测",
+      "provider": "volcano",
+      "model": "doubao-pro-vision",
+      "temperature": 0.1,
+      "check_type": "character_consistency",
+      "reference_profiles": "narrative_tensor.entity_space",
+      "threshold": 0.92,
+      "blocking": true
+    },
+    {
+      "id": "V2_CanonCompliance",
+      "name": "原作合规性检查",
+      "provider": "local",
+      "check_type": "foreshadowing_resolution",
+      "ruleset": "rules/foreclosure_checker.py",
+      "must_resolve": "all_critical_foreshadowings"
+    },
+    {
+      "id": "V3_NarrativeCoherence",
+      "name": "叙事连贯性",
+      "provider": "multi",
+      "models": ["kimi-k1.5", "deepseek-v3"],
+      "check_type": "logical_consistency",
+      "attack_types": ["plot_hole", "character_motivation_gap", "world_rule_violation"]
+    }
+  ],
+  "output_combiner": {
+    "strategy": "weighted_voting",
+    "weights": {"L3_SceneDrafting": 0.3, "L4_DialogueSculpting": 0.3, "L5_ProsePolishing": 0.4}
+  }
+}
