@@ -231,7 +231,7 @@ Configure AI providers in `config/analyzer_schema.json` and `config/generator_sc
 - **openai**: OpenAI GPT models
 - **lmstudio**: Local model management
 
-## � Development
+## 🔧 Development
 
 ### Building Tests
 
