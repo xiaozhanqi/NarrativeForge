@@ -2,8 +2,9 @@
 
 <div align="center">
 
-![NarrativeForge Logo](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Python](https://img.shields.io/badge/python-3.11+-green.svg)
+![Version](https://img.shields.io/badge/version-0.4.3-blue.svg)
+![Stage](https://img.shields.io/badge/stage-beta-orange.svg)
+![C++](https://img.shields.io/badge/C++-17-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
@@ -23,12 +24,12 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 
 ### 🎯 Development Status
 
-- **Status**: Slow and irregular progress
-- **Special Reminder**: The main storyline might be stagnant for a long time
-- **Version**: 0.2.2 (beta)
-- **AI Technology**: Utilizes advanced Large Language Models (LLMs) including Kimi, Volcano, and local models via LM Studio
+- **Status**: Active Development
+- **Version**: 0.4.3 (beta)
+- **Implementation**: C++17
+- **AI Technology**: Utilizes advanced Large Language Models (LLMs) including Kimi, Volcano, and OpenAI
 - **Core Innovation**: Proprietary Narrative Tensor representation and Quantum World State management
-- **Platform Support**: Cross-platform (Windows,（ macOS, Linux （Unverified and uncertain supportiveness））)
+- **Platform Support**: Cross-platform (Windows, macOS, Linux)
 
 ### 🎯 Key Features
 
@@ -37,7 +38,9 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 - **Quantum World State**: Advanced state management tracking entities, timeline, and foreshadowing
 - **L/V Rounds**: Learning and validation rounds for both analysis and generation
 - **Domain Adaptation**: Support for multiple genres (scifi, fantasy, historical, mystery)
-- **Multiple Interfaces**: Desktop GUI (PyQt6), Web Interface (Flask), and CLI
+- **Multiple Interfaces**: CLI, Qt6 GUI, and Web Server
+- **Modular Design**: Unified controller with independent functional modules
+- **Encrypted Storage**: One machine one code API key storage
 
 ## 🚀 Features
 
@@ -65,15 +68,19 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 ### AI Provider Support
 - **Kimi**: Advanced language model integration
 - **Volcano**: High-performance inference
+- **OpenAI**: GPT models support
 - **LM Studio**: Local model support
 
 ## 📦 Installation
 
 ### Prerequisites
-- Python 3.11 or higher
-- pip package manager
-- 4GB RAM minimum (8GB recommended)
-- 8GB+ free disk space （Unverified）
+- C++17 or higher
+- CMake 3.16+
+- Qt6 (for GUI)
+- OpenSSL
+- SQLite3
+- libcurl
+- nlohmann/json
 
 ### Quick Start
 
@@ -83,51 +90,62 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
    cd narrativeforge
    ```
 
-2. **Run setup script** (Recommended)
+2. **Build on Linux/macOS**
    ```bash
-   py setup_and_run.py
-   ```
-   
-   This will automatically:
-   - Check Python version
-   - Install missing dependencies
-   - Create required directories
-   - Launch application
-
-3. **Manual Installation** (Alternative)
-   ```bash
-   pip install -r requirements.txt
+   cd cpp
+   mkdir build && cd build
+   cmake ..
+   make -j$(nproc)
    ```
 
-### Required Dependencies
+3. **Build on Windows**
+   ```powershell
+   cd cpp
+   mkdir build
+   cd build
+   cmake ..
+   cmake --build . --config Release
+   ```
 
+### Dependencies Installation
+
+**Ubuntu/Debian:**
+```bash
+sudo apt-get install cmake libssl-dev libsqlite3-dev libcurl4-openssl-dev nlohmann-json3-dev qt6-base-dev
 ```
-numpy>=1.21.0
-networkx>=2.8.0
-scikit-learn>=1.3.0
-aiohttp>=3.9.0
-PyQt6>=6.6.0
-PyQt6-WebEngine>=6.6.0
-Flask>=3.0.0
-Flask-CORS>=4.0.0
-jsonschema>=4.17.0
-python-dotenv>=1.0.0
+
+**macOS:**
+```bash
+brew install cmake openssl sqlite curl nlohmann-json qt6
+```
+
+**Windows (vcpkg):**
+```powershell
+vcpkg install openssl sqlite3 curl nlohmann-json qt6-base
 ```
 
 ## 🎮 Usage
 
-### Desktop GUI Mode
+### CLI Mode
 
-Launch PyQt6 desktop application:
+Launch command-line interface:
 
 ```bash
-py setup_and_run.py gui
+./build/narrativeforge_cli
 ```
 
-Or directly:
+**Features:**
+- Interactive menu system
+- Text analysis and generation
+- API key management
+- Progress tracking
+
+### GUI Mode
+
+Launch Qt6 desktop application:
 
 ```bash
-py main.py --gui
+./build/narrativeforge_gui
 ```
 
 **Features:**
@@ -136,12 +154,12 @@ py main.py --gui
 - Visual workspace switching
 - Export functionality for tensors and generated text
 
-### Web Interface Mode
+### Web Server Mode
 
-Start Flask web server:
+Start web server:
 
 ```bash
-py setup_and_run.py web
+./build/narrativeforge_web
 ```
 
 Then open your browser and navigate to: **http://localhost:5000**
@@ -152,43 +170,35 @@ Then open your browser and navigate to: **http://localhost:5000**
 - RESTful API integration
 - Real-time status updates
 
-### Command Line Mode
-
-Run CLI example:
-
-```bash
-py setup_and_run.py cli
-```
-
-Or directly:
-
-```bash
-py main.py
-```
-
 ## 📁 Project Structure
 
 ```
 narrativeforge/
-├── core/                      # Core engine modules
-│   ├── analyzer.py           # Analysis engine implementation
-│   ├── generator.py          # Generation engine implementation
-│   ├── api_router.py        # Universal API router
-│   ├── domain_adapter.py     # Domain knowledge adapter
-│   └── database.py          # Narrative database
-├── ui/                        # User interface
-│   └── main_window.py      # PyQt6 desktop GUI
-├── config/                     # Configuration files
+├── cpp/                          # C++ Implementation
+│   ├── include/narrativeforge/   # Header files
+│   │   ├── core.hpp             # Core engine
+│   │   ├── api_router.hpp       # API router
+│   │   ├── api_key_manager.hpp  # API key manager
+│   │   ├── module_interface.hpp # Module interface
+│   │   └── app_controller.hpp   # Main controller
+│   ├── src/                     # Source files
+│   │   ├── core/                # Core implementation
+│   │   │   ├── analyzer.cpp
+│   │   │   ├── generator.cpp
+│   │   │   ├── api_router.cpp
+│   │   │   ├── api_key_manager.cpp
+│   │   │   └── app_controller.cpp
+│   │   ├── main.cpp             # Main entry
+│   │   └── main_cli.cpp         # CLI program
+│   ├── CMakeLists.txt           # Build configuration
+│   └── README.md                # C++ documentation
+├── config/                       # Configuration files
 │   ├── analyzer_schema.json
 │   └── generator_schema.json
-├── templates/                  # Web templates
-│   └── index.html          # Web interface
-├── app.py                     # Flask web application
-├── main.py                    # Main entry point
-├── setup_and_run.py          # Environment setup script
-├── requirements.txt            # Python dependencies
-├── sample_canon.txt          # Sample text for testing
-└── README.md                  # This file
+├── templates/                    # Web templates
+│   └── index.html
+├── sample_canon.txt             # Sample text
+└── README.md                    # This file
 ```
 
 ## ⚙️ Configuration
@@ -218,110 +228,114 @@ Configure AI providers in `config/analyzer_schema.json` and `config/generator_sc
 
 - **kimi**: Moonshot AI language model
 - **volcano**: ByteDance inference platform
+- **openai**: OpenAI GPT models
 - **lmstudio**: Local model management
 
+## � Development
 
-## 🔧 Development
-
-### Running Tests
+### Building Tests
 
 ```bash
-# Run basic functionality test
-py setup_and_run.py cli
+cmake -DBUILD_TESTS=ON ..
+make
+ctest
 ```
 
 ### Adding New Features
 
-1. **Core Logic**: Add to `core/` modules
-2. **UI Components**: Add to `ui/main_window.py` or `templates/index.html`
+1. **Core Logic**: Add to `cpp/src/core/` modules
+2. **UI Components**: Add to `cpp/src/ui/` or `templates/`
 3. **Configuration**: Update `config/` JSON files
 4. **Documentation**: Update this README file
 
 ### Code Style
 
-- Follow PEP 8 guidelines
-- Use type hints for function signatures
-- Add docstrings for all public functions
-- Write unit tests for new features
+- Follow C++17 standards
+- Use modern C++ features
+- RAII for resource management
+- Smart pointers for memory safety
+- Use `#pragma once` for header guards
 
 ## 📊 Examples
 
-### Basic Analysis
+### Basic Analysis (C++)
 
-```python
-from core.analyzer import CanonAnalysisEngine
+```cpp
+#include "narrativeforge/app_controller.hpp"
 
-analyzer = CanonAnalysisEngine("config/analyzer_schema.json", "my_project")
-narrative_tensor = await analyzer.run_analysis_pipeline(source_text)
+using namespace narrativeforge;
+
+int main() {
+    auto& app = AppController::instance();
+    app.initialize();
+    
+    std::string text = "Your text here...";
+    auto future = app.analyze_text(text);
+    NarrativeTensor tensor = future.get();
+    
+    // Save tensor
+    std::ofstream out("tensor.json");
+    out << tensor.to_json().dump(2);
+    
+    return 0;
+}
 ```
 
-### Basic Generation
+### Basic Generation (C++)
 
-```python
-from core.generator import NarrativeGenerationEngine
+```cpp
+#include "narrativeforge/app_controller.hpp"
+#include <fstream>
 
-generator = NarrativeGenerationEngine("config/generator_schema.json", "my_project", narrative_tensor)
-generated_text = await generator.run_generation_pipeline()
-```
+using namespace narrativeforge;
 
-### Web API Usage
-
-```python
-import requests
-
-# Analyze text
-response = requests.post('http://localhost:5000/analyze', json={
-    'text': source_text,
-    'project_id': 'my_project'
-})
-narrative_tensor = response.json()
-
-# Generate content
-response = requests.post('http://localhost:5000/generate', json={
-    'narrative_tensor': narrative_tensor,
-    'mode': 'continuation',
-    'project_id': 'my_project'
-})
-generated_text = response.json()['generated_text']
+int main() {
+    // Load tensor
+    std::ifstream file("tensor.json");
+    nlohmann::json j;
+    file >> j;
+    NarrativeTensor tensor = NarrativeTensor::from_json(j);
+    
+    auto& app = AppController::instance();
+    app.initialize();
+    
+    auto future = app.generate_text(tensor, "continuation");
+    std::string text = future.get();
+    
+    std::cout << text << std::endl;
+    
+    return 0;
+}
 ```
 
 ## 🐛 Troubleshooting
 
-### Python Not Found
+### Build Errors
 
-If you get "Python was not found" error:
+**CMake not found:**
+- Install CMake 3.16 or higher
 
-1. Make sure Python 3.11+ is installed
-2. Use `py` command instead of `python`
-3. Check Python installation path
-4. Add Python to system PATH
+**OpenSSL not found:**
+- Install OpenSSL development libraries
+- Set `OPENSSL_ROOT_DIR` environment variable
 
-### Missing Dependencies
+**Qt6 not found:**
+- Install Qt6 and set `Qt6_DIR` environment variable
+- Example: `export Qt6_DIR=/path/to/Qt6/lib/cmake/Qt6`
 
-If you get import errors:
+### Runtime Errors
 
-1. Run `py setup_and_run.py` to auto-install dependencies
-2. Or manually install: `pip install -r requirements.txt`
-3. Check pip version: `pip --version`
-4. Update pip: `python -m pip install --upgrade pip`
+**API key not configured:**
+- Run the setup wizard on first run
+- Or manually configure API keys in the database
 
-### Encoding Issues
+**Database errors:**
+- Check file permissions
+- Ensure data directory exists
 
-If you see encoding-related errors:
-
-1. Make sure all files are saved as UTF-8
-2. Check your system locale settings
-3. The project uses English strings to avoid encoding issues
-4. Set environment variable: `set PYTHONIOENCODING=utf-8`
-
-### PyQt6 Issues
-
-If GUI fails to start:
-
-1. Install PyQt6: `pip install PyQt6 PyQt6-WebEngine`
-2. Check display drivers
-3. Try CLI mode: `py setup_and_run.py cli`
-4. Check system requirements: 4GB RAM minimum
+**Module errors:**
+- Check module status with option 6 in CLI
+- Review error messages in console
 
 ## 🤝 Contributing
 
@@ -336,19 +350,20 @@ Contributions are welcome! Please follow these guidelines:
 ### Development Setup
 
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Clone repository
+git clone https://github.com/xiaozhanqi/narrativeforge.git
+cd narrativeforge
 
-# Install development dependencies
-pip install -r requirements.txt
-pip install pytest black flake8
+# Create build directory
+cd cpp
+mkdir build && cd build
+
+# Configure and build
+cmake ..
+make -j$(nproc)
 
 # Run tests
-pytest tests/
-
-# Format code
-black .
+ctest
 ```
 
 ## 📝 License
@@ -359,8 +374,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Moonshot AI** for the Kimi language model
 - **ByteDance** for the Volcano platform
-- **PyQt6 Team** for the excellent GUI framework
-- **Flask Community** for the web framework
+- **Qt Company** for the excellent Qt framework
+- **nlohmann** for the JSON library
 
 ## 📞 Support
 
@@ -483,7 +498,7 @@ By using NarrativeForge, you agree that:
 - You will comply with all applicable local, national, and international laws regarding AI-generated content.
 
 ### 7. Beta Software Notice
-NarrativeForge is currently in beta (v0.2.2). Features may change without notice, and backward compatibility is not guaranteed. The API, database schema, and configuration formats are subject to breaking changes during the development phase.
+NarrativeForge is currently in beta (v0.4.3). Features may change without notice, and backward compatibility is not guaranteed. The API, database schema, and configuration formats are subject to breaking changes during the development phase.
 
 ### 8. Educational and Research Use
 This software is intended for narrative analysis research, creative writing assistance, and educational purposes. It is not intended as a substitute for professional editorial services, legal advice, or critical decision-making.
@@ -493,7 +508,7 @@ This software is intended for narrative analysis research, creative writing assi
 
 <div align="center">
 
-
+**Built with ❤️ by the NarrativeForge Team**
 
 [⬆ Back to Top](#narrativeforge)
 
