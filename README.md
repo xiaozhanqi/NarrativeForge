@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.4.3-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.2-blue.svg)
 ![Stage](https://img.shields.io/badge/stage-beta-orange.svg)
 ![Docs](https://img.shields.io/badge/docs-v2.1.0-informational.svg)
 ![C++](https://img.shields.io/badge/C++-17-green.svg)
@@ -27,7 +27,7 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 
 - **Status**: Slow and irregular progress
 - **Special Reminder**: The main storyline might be stagnant for a long time
-- **Version**: 0.4.3 (beta)
+- **Version**: 0.5.2 (beta)
 - **Implementation**: C++17
 - **AI Technology**: Utilizes advanced Large Language Models (LLMs) including Kimi, Volcano, and OpenAI
 - **Core Innovation**: Proprietary Narrative Tensor representation and Quantum World State management
@@ -41,6 +41,7 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 - **Domain Adaptation**: Support for multiple genres (scifi, fantasy, historical, mystery)
 - **Multiple Interfaces**: CLI, Qt6 GUI, and Web Server
 - **Modular Design**: Unified controller with independent functional modules
+- **Unified Controller**: New unified control module integrating all functionality
 - **Encrypted Storage**: One machine one code API key storage
 
 ## 🚀 Features
@@ -93,6 +94,10 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 
 2. **Build on Linux/macOS**
    ```bash
+   # Using build script
+   ./scripts/build.sh
+   
+   # Or manual build
    cd cpp
    mkdir build && cd build
    cmake ..
@@ -101,6 +106,14 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 
 3. **Build on Windows**
    ```powershell
+   # Using build script (recommended)
+   .\scripts\build_with_portable_cmake.bat
+   
+   # Or other build scripts
+   .\scripts\build_simple.bat
+   .\scripts\build_windows.bat
+   
+   # Or manual build
    cd cpp
    mkdir build
    cd build
@@ -171,35 +184,69 @@ Then open your browser and navigate to: **http://localhost:5000**
 - RESTful API integration
 - Real-time status updates
 
+### Unified Controller Mode
+
+Start unified controller:
+
+```bash
+./build/narrativeforge_unified
+```
+
+**Features:**
+- Integrated control center for all functionality
+- Simplified menu-driven interface
+- Unified access to analysis and generation
+- Comprehensive module management
+
 ## 📁 Project Structure
 
 ```
 narrativeforge/
+├── assets/                       # Project assets
+├── config/                       # Configuration files
+│   ├── analyzer_schema.json
+│   └── generator_schema.json
 ├── cpp/                          # C++ Implementation
 │   ├── include/narrativeforge/   # Header files
 │   │   ├── core.hpp             # Core engine
 │   │   ├── api_router.hpp       # API router
 │   │   ├── api_key_manager.hpp  # API key manager
 │   │   ├── module_interface.hpp # Module interface
-│   │   └── app_controller.hpp   # Main controller
+│   │   ├── app_controller.hpp   # Main controller
+│   │   └── unified_controller.hpp # Unified controller
 │   ├── src/                     # Source files
 │   │   ├── core/                # Core implementation
 │   │   │   ├── analyzer.cpp
 │   │   │   ├── generator.cpp
 │   │   │   ├── api_router.cpp
 │   │   │   ├── api_key_manager.cpp
-│   │   │   └── app_controller.cpp
+│   │   │   ├── app_controller.cpp
+│   │   │   └── unified_controller.cpp
 │   │   ├── main.cpp             # Main entry
-│   │   └── main_cli.cpp         # CLI program
+│   │   ├── main_cli.cpp         # CLI program
+│   │   └── main_unified.cpp     # Unified controller program
 │   ├── CMakeLists.txt           # Build configuration
 │   └── README.md                # C++ documentation
-├── config/                       # Configuration files
-│   ├── analyzer_schema.json
-│   └── generator_schema.json
+├── docs/                         # Documentation files
+├── kb/                           # Knowledge base
+├── project/                      # Project-related files
+├── prompts/                      # AI prompts
+├── reports/                      # Project reports
+├── resources/                    # Resource files
+│   └── sample_canon.txt         # Sample text
+├── scripts/                      # Build and utility scripts
+│   ├── build.sh
+│   ├── build_simple.bat
+│   ├── build_windows.bat
+│   └── build_with_portable_cmake.bat
 ├── templates/                    # Web templates
 │   └── index.html
-├── sample_canon.txt             # Sample text
-└── README.md                    # This file
+├── tools/                        # Development tools
+│   ├── cmake-3.19.4-win64-x64/ # Portable CMake
+│   ├── cmake-3.28.3-windows-x86_64.msi
+│   └── cmake-3.28.3-windows-x86_64.zip
+├── LICENSE                       # MIT License
+└── README.md                     # This file
 ```
 
 ## ⚙️ Configuration
@@ -262,22 +309,24 @@ ctest
 ### Basic Analysis (C++)
 
 ```cpp
-#include "narrativeforge/app_controller.hpp"
+#include "narrativeforge/unified_controller.hpp"
 
 using namespace narrativeforge;
 
 int main() {
-    auto& app = AppController::instance();
-    app.initialize();
+    auto& controller = UnifiedController::instance();
+    controller.initialize();
+    controller.start();
     
     std::string text = "Your text here...";
-    auto future = app.analyze_text(text);
+    auto future = controller.analyze_text(text);
     NarrativeTensor tensor = future.get();
     
     // Save tensor
     std::ofstream out("tensor.json");
     out << tensor.to_json().dump(2);
     
+    controller.shutdown();
     return 0;
 }
 ```
@@ -285,7 +334,7 @@ int main() {
 ### Basic Generation (C++)
 
 ```cpp
-#include "narrativeforge/app_controller.hpp"
+#include "narrativeforge/unified_controller.hpp"
 #include <fstream>
 
 using namespace narrativeforge;
@@ -297,14 +346,39 @@ int main() {
     file >> j;
     NarrativeTensor tensor = NarrativeTensor::from_json(j);
     
-    auto& app = AppController::instance();
-    app.initialize();
+    auto& controller = UnifiedController::instance();
+    controller.initialize();
+    controller.start();
     
-    auto future = app.generate_text(tensor, "continuation");
+    auto future = controller.generate_text(tensor, "continuation");
     std::string text = future.get();
     
     std::cout << text << std::endl;
     
+    controller.shutdown();
+    return 0;
+}
+```
+
+### Full Pipeline (C++)
+
+```cpp
+#include "narrativeforge/unified_controller.hpp"
+
+using namespace narrativeforge;
+
+int main() {
+    auto& controller = UnifiedController::instance();
+    controller.initialize();
+    controller.start();
+    
+    std::string text = "Your text here...";
+    auto future = controller.run_full_pipeline(text, "continuation");
+    std::string generated_text = future.get();
+    
+    std::cout << generated_text << std::endl;
+    
+    controller.shutdown();
     return 0;
 }
 ```
@@ -499,7 +573,7 @@ By using NarrativeForge, you agree that:
 - You will comply with all applicable local, national, and international laws regarding AI-generated content.
 
 ### 7. Beta Software Notice
-NarrativeForge is currently in beta (v0.4.3). Features may change without notice, and backward compatibility is not guaranteed. The API, database schema, and configuration formats are subject to breaking changes during the development phase.
+NarrativeForge is currently in beta (v0.5.2). Features may change without notice, and backward compatibility is not guaranteed. The API, database schema, and configuration formats are subject to breaking changes during the development phase.
 
 ### 8. Educational and Research Use
 This software is intended for narrative analysis research, creative writing assistance, and educational purposes. It is not intended as a substitute for professional editorial services, legal advice, or critical decision-making.

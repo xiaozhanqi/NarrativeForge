@@ -4,6 +4,7 @@
 #include <vector>
 #include <optional>
 #include <memory>
+#include <map>
 
 namespace narrativeforge {
 
@@ -39,10 +40,6 @@ public:
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl_;
-    
-    std::string encrypt(const std::string& data, const std::string& key) const;
-    std::string decrypt(const std::string& encrypted_data, const std::string& key) const;
-    std::string generate_machine_id() const;
 };
 
 } // namespace narrativeforge
