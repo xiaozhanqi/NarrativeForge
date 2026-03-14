@@ -2,10 +2,14 @@
 
 <div align="center">
 
-![NarrativeForge Logo](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.2.2-red.svg)
+![Stage](https://img.shields.io/badge/stage-beta-orange.svg)
+![Docs](https://img.shields.io/badge/docs-v1.2.0-informational.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
+
+</div>
 
 **Universal Narrative Engineering Platform**
 
