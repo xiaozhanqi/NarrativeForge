@@ -4,6 +4,7 @@
 
 ![Version](https://img.shields.io/badge/version-0.4.3-blue.svg)
 ![Stage](https://img.shields.io/badge/stage-beta-orange.svg)
+![Docs](https://img.shields.io/badge/docs-v2.1.0-informational.svg)
 ![C++](https://img.shields.io/badge/C++-17-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
@@ -24,13 +25,13 @@ NarrativeForge is a sophisticated narrative engineering platform designed to ana
 
 ### 🎯 Development Status
 
-- **Status**: Active Development
+- **Status**: Slow and irregular progress
+- **Special Reminder**: The main storyline might be stagnant for a long time
 - **Version**: 0.4.3 (beta)
 - **Implementation**: C++17
 - **AI Technology**: Utilizes advanced Large Language Models (LLMs) including Kimi, Volcano, and OpenAI
 - **Core Innovation**: Proprietary Narrative Tensor representation and Quantum World State management
-- **Platform Support**: Cross-platform (Windows, macOS, Linux)
-
+- **Platform Support**: Cross-platform (Windows,（ macOS, Linux （Unverified and uncertain supportiveness））)
 ### 🎯 Key Features
 
 - **Dual-Core Architecture**: Separate analysis and generation engines with decoupled pipelines
